@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ban as Bar, ChevronDown, ChevronUp, Menu, Star, X, Home, ShoppingBag, Package, Store, Settings } from 'lucide-react';
+import { Ban as Bar, ChevronDown, ChevronUp, Menu, Star, X, Home, ShoppingBag, Package, Store } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import Chart from 'react-apexcharts';
 import { Dialog, DialogContent } from '../../components/ui/dialog';
@@ -259,10 +259,10 @@ export const RestaurantDashboard = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <aside className={cn(
-        "bg-[#2D2D2D] text-white transition-all duration-300",
+        "bg-[#2D2D2D] text-white transition-all duration-300 h-screen overflow-y-auto",
         isSidebarCollapsed ? "w-20" : "w-64"
       )}>
         <div className="p-4 flex items-center justify-between">
@@ -322,24 +322,7 @@ export const RestaurantDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1">
-        {/* Header */}
-        <header className="bg-white border-b">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Bar className="h-6 w-6" />
-                Dashboard
-              </h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <select className="bg-white rounded-lg border px-4 py-2">
-                <option>Overall Statistics</option>
-              </select>
-            </div>
-          </div>
-        </header>
-
+      <div className="flex-1 overflow-y-auto">
         <div className="p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Order Statistics */}
