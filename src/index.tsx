@@ -12,6 +12,7 @@ import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { FeedbackPage } from "./screens/Feedback/FeedbackPage";
 import { RestaurantSignup } from "./screens/RestaurantSignup";
+import { RestaurantDashboard } from "./screens/RestaurantDashboard/RestaurantDashboard";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
                 <Route path="/order-success" element={<OrderSuccess />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
                 <Route path="/restaurant-signup" element={<RestaurantSignup />} />
+                <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
               </Routes>
             </main>
             <FooterSection />

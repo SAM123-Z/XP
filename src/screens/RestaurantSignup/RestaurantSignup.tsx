@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
 import { MapPin, Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const restaurantSchema = z.object({
   restaurantName: z.string().min(1, 'Le nom du restaurant est requis'),
@@ -25,6 +26,7 @@ const restaurantSchema = z.object({
 });
 
 export const RestaurantSignup = () => {
+  const navigate = useNavigate();
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [logo, setLogo] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,7 +41,8 @@ export const RestaurantSignup = () => {
       // Simuler l'envoi du formulaire
       console.log('Form data:', { ...data, coverImage, logo });
       await new Promise(resolve => setTimeout(resolve, 1500));
-      // Rediriger vers la page de confirmation
+      // Rediriger vers le tableau de bord du restaurant
+      navigate('/restaurant-dashboard');
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
