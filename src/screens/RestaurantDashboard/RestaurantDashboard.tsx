@@ -1,7 +1,8 @@
-import React from 'react';
-import { Ban as Bar, ChevronDown, ChevronUp, Menu, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { Ban as Bar, ChevronDown, ChevronUp, Menu, Star, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import Chart from 'react-apexcharts';
+import { Dialog, DialogContent } from '../../components/ui/dialog';
 
 interface OrderStats {
   confirmed: number;
@@ -15,19 +16,83 @@ interface OrderStats {
 }
 
 interface TopSellingFood {
+  id: number;
   name: string;
   image: string;
   soldCount: number;
+  inStock: boolean;
 }
 
 interface TopRatedFood {
+  id: number;
   name: string;
   image: string;
   rating: number;
   reviews: number;
+  inStock: boolean;
 }
 
+interface ProductDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: TopSellingFood | TopRatedFood | null;
+}
+
+const ProductDialog = ({ isOpen, onClose, product }: ProductDialogProps) => {
+  if (!product) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px] p-0">
+        <div className="relative rounded-lg overflow-hidden">
+          <button
+            onClick={onClose}
+            className="absolute right-2 top-2 p-1 bg-white rounded-full z-10"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-48 object-cover"
+          />
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
+            <p className="text-gray-600 mb-4">
+              {product.inStock ? "This product is in stock." : "This product is out of stock."}
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                className="flex-1 text-blue-600 hover:text-blue-700"
+                onClick={() => {
+                  // Handle remind me later
+                  onClose();
+                }}
+              >
+                Remind me later
+              </Button>
+              <Button
+                className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => {
+                  // Handle view details
+                  onClose();
+                }}
+              >
+                Click To View
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export const RestaurantDashboard = () => {
+  const [selectedProduct, setSelectedProduct] = useState<TopSellingFood | TopRatedFood | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const orderStats: OrderStats = {
     confirmed: 1,
     cooking: 0,
@@ -41,42 +106,59 @@ export const RestaurantDashboard = () => {
 
   const topSellingFoods: TopSellingFood[] = [
     {
+      id: 1,
       name: "Medu Vada",
       image: "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg",
-      soldCount: 9
+      soldCount: 9,
+      inStock: true
     },
     {
+      id: 2,
       name: "Meat Pizza",
       image: "https://images.pexels.com/photos/1146760/pexels-photo-1146760.jpeg",
-      soldCount: 5
+      soldCount: 5,
+      inStock: false
     },
     {
+      id: 3,
       name: "Chicken Shawarma",
       image: "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
-      soldCount: 2
+      soldCount: 2,
+      inStock: true
     }
   ];
 
   const topRatedFoods: TopRatedFood[] = [
     {
+      id: 4,
       name: "Meat Pizza",
       image: "https://images.pexels.com/photos/1146760/pexels-photo-1146760.jpeg",
       rating: 4.5,
-      reviews: 3
+      reviews: 3,
+      inStock: true
     },
     {
+      id: 5,
       name: "Masala Poori",
       image: "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg",
       rating: 0,
-      reviews: 0
+      reviews: 0,
+      inStock: false
     },
     {
+      id: 6,
       name: "Idli",
       image: "https://images.pexels.com/photos/941869/pexels-photo-941869.jpeg",
       rating: 0,
-      reviews: 0
+      reviews: 0,
+      inStock: true
     }
   ];
+
+  const handleProductClick = (product: TopSellingFood | TopRatedFood) => {
+    setSelectedProduct(product);
+    setIsDialogOpen(true);
+  };
 
   const chartOptions = {
     chart: {
@@ -234,8 +316,12 @@ export const RestaurantDashboard = () => {
             <div className="bg-white rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-4">Top Selling Foods</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {topSellingFoods.map((food, index) => (
-                  <div key={index} className="relative rounded-lg overflow-hidden">
+                {topSellingFoods.map((food) => (
+                  <div
+                    key={food.id}
+                    className="relative rounded-lg overflow-hidden cursor-pointer"
+                    onClick={() => handleProductClick(food)}
+                  >
                     <img
                       src={food.image}
                       alt={food.name}
@@ -254,8 +340,12 @@ export const RestaurantDashboard = () => {
             <div className="bg-white rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-4">Top Rated Foods</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {topRatedFoods.map((food, index) => (
-                  <div key={index} className="bg-white rounded-lg p-4 shadow">
+                {topRatedFoods.map((food) => (
+                  <div
+                    key={food.id}
+                    className="bg-white rounded-lg p-4 shadow cursor-pointer"
+                    onClick={() => handleProductClick(food)}
+                  >
                     <img
                       src={food.image}
                       alt={food.name}
@@ -276,6 +366,12 @@ export const RestaurantDashboard = () => {
           </div>
         </div>
       </div>
+
+      <ProductDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        product={selectedProduct}
+      />
     </div>
   );
 };
