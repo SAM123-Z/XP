@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bar, ChevronDown, ChevronUp, Menu, Star } from 'lucide-react';
+import { Ban as Bar, ChevronDown, ChevronUp, Menu, Star } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import Chart from 'react-apexcharts';
 
