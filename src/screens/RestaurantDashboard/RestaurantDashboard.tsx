@@ -97,6 +97,16 @@ export const RestaurantDashboard = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeMenuItem, setActiveMenuItem] = useState('Dashboard');
+  const [expandedSections, setExpandedSections] = useState<string[]>(['Dashboard']);
+
+  const toggleSection = (sectionName: string) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionName) 
+        ? prev.filter(name => name !== sectionName)
+        : [...prev, sectionName]
+    );
+  };
 
   const sidebarItems: SidebarItem[] = [
     {
@@ -339,52 +349,83 @@ export const RestaurantDashboard = () => {
       {/* Sidebar - Desktop */}
       <aside className={cn(
         "hidden md:block bg-[#2D2D2D] text-white transition-all duration-300 h-screen sticky top-0",
-        isSidebarCollapsed ? "w-20" : "w-64"
+        isSidebarCollapsed ? "w-20" : "w-72"
       )}>
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <img src="/hungry-puppets-logo.png" alt="Logo" className="w-8 h-8" />
-            {!isSidebarCollapsed && <span className="font-bold">Hungry Puppets</span>}
+        <div className="p-6 flex items-center justify-between border-b border-gray-700">
+          <div className="flex items-center space-x-3">
+            <img src="/hungry-puppets-logo.png" alt="Logo" className="w-10 h-10" />
+            {!isSidebarCollapsed && (
+              <span className="font-bold text-lg tracking-wide">Hungry Puppets</span>
+            )}
           </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="text-white hover:bg-gray-700"
+            className="text-white hover:bg-gray-700 transition-colors"
           >
             <Menu className="h-5 w-5" />
           </Button>
         </div>
 
-        <nav className="mt-4">
+        <nav className="mt-6 px-4">
           {sidebarItems.map((item, index) => (
-            <div key={index} className="transition-all duration-200">
-              <div className={cn(
-                "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 cursor-pointer",
-                !isSidebarCollapsed && "space-x-2"
-              )}>
-                {item.icon}
-                {!isSidebarCollapsed && (
-                  <>
-                    <span className="flex-1 text-sm">{item.name}</span>
-                    {item.count !== undefined && (
-                      <span className="bg-[#ff6600] px-2 py-0.5 rounded-full text-xs">
-                        {item.count}
-                      </span>
-                    )}
-                  </>
+            <div key={index} className="mb-2">
+              <div
+                className={cn(
+                  "flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-200",
+                  activeMenuItem === item.name
+                    ? "bg-[#ff6600] text-white"
+                    : "text-gray-300 hover:bg-gray-700",
+                  !isSidebarCollapsed && "space-x-3"
                 )}
+                onClick={() => {
+                  setActiveMenuItem(item.name);
+                  if (item.subItems) toggleSection(item.name);
+                }}
+              >
+                <div className={cn(
+                  "flex items-center",
+                  !isSidebarCollapsed && "w-full"
+                )}>
+                  {item.icon}
+                  {!isSidebarCollapsed && (
+                    <>
+                      <span className="ml-3 flex-1 text-sm font-medium">
+                        {item.name}
+                      </span>
+                      {item.subItems && (
+                        <ChevronDown className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          expandedSections.includes(item.name) && "transform rotate-180"
+                        )} />
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-              {!isSidebarCollapsed && item.subItems && (
-                <div className="pl-10 pr-4">
+
+              {!isSidebarCollapsed && item.subItems && expandedSections.includes(item.name) && (
+                <div className="mt-2 ml-12 space-y-2">
                   {item.subItems.map((subItem, subIndex) => (
                     <div
                       key={subIndex}
-                      className="flex items-center justify-between py-2 text-sm text-gray-400 hover:text-white cursor-pointer transition-colors duration-200"
+                      className={cn(
+                        "flex items-center justify-between py-2 px-3 rounded-md text-sm transition-colors duration-200",
+                        activeMenuItem === subItem.name
+                          ? "bg-gray-700 text-white"
+                          : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                      )}
+                      onClick={() => setActiveMenuItem(subItem.name)}
                     >
-                      <span>{subItem.name}</span>
+                      <span className="font-medium">{subItem.name}</span>
                       {subItem.count !== undefined && (
-                        <span className="bg-gray-700 px-2 py-0.5 rounded-full text-xs">
+                        <span className={cn(
+                          "px-2 py-1 rounded-full text-xs",
+                          activeMenuItem === subItem.name
+                            ? "bg-[#ff6600]"
+                            : "bg-gray-700"
+                        )}>
                           {subItem.count}
                         </span>
                       )}
@@ -407,13 +448,13 @@ export const RestaurantDashboard = () => {
 
       {/* Mobile Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 bg-[#2D2D2D] text-white w-64 transform transition-transform duration-300 ease-in-out md:hidden",
+        "fixed inset-y-0 left-0 z-40 bg-[#2D2D2D] text-white w-72 transform transition-transform duration-300 ease-in-out md:hidden",
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <img src="/hungry-puppets-logo.png" alt="Logo" className="w-8 h-8" />
-            <span className="font-bold">Hungry Puppets</span>
+        <div className="p-6 flex items-center justify-between border-b border-gray-700">
+          <div className="flex items-center space-x-3">
+            <img src="/hungry-puppets-logo.png" alt="Logo" className="w-10 h-10" />
+            <span className="font-bold text-lg tracking-wide">Hungry Puppets</span>
           </div>
           <Button
             variant="ghost"
@@ -425,23 +466,56 @@ export const RestaurantDashboard = () => {
           </Button>
         </div>
 
-        <nav className="mt-4">
+        <nav className="mt-6 px-4">
           {sidebarItems.map((item, index) => (
-            <div key={index}>
-              <div className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 cursor-pointer">
-                {item.icon}
-                <span className="ml-2 flex-1">{item.name}</span>
+            <div key={index} className="mb-2">
+              <div
+                className={cn(
+                  "flex items-center px-4 py-3 rounded-lg cursor-pointer transition-all duration-200",
+                  activeMenuItem === item.name
+                    ? "bg-[#ff6600] text-white"
+                    : "text-gray-300 hover:bg-gray-700"
+                )}
+                onClick={() => {
+                  setActiveMenuItem(item.name);
+                  if (item.subItems) toggleSection(item.name);
+                }}
+              >
+                <div className="flex items-center w-full">
+                  {item.icon}
+                  <span className="ml-3 flex-1 text-sm font-medium">
+                    {item.name}
+                  </span>
+                  {item.subItems && (
+                    <ChevronDown className={cn(
+                      "h-4 w-4 transition-transform duration-200",
+                      expandedSections.includes(item.name) && "transform rotate-180"
+                    )} />
+                  )}
+                </div>
               </div>
-              {item.subItems && (
-                <div className="pl-10 pr-4">
+
+              {item.subItems && expandedSections.includes(item.name) && (
+                <div className="mt-2 ml-12 space-y-2">
                   {item.subItems.map((subItem, subIndex) => (
                     <div
                       key={subIndex}
-                      className="flex items-center justify-between py-2 text-sm text-gray-400 hover:text-white cursor-pointer"
+                      className={cn(
+                        "flex items-center justify-between py-2 px-3 rounded-md text-sm transition-colors duration-200",
+                        activeMenuItem === subItem.name
+                          ? "bg-gray-700 text-white"
+                          : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                      )}
+                      onClick={() => setActiveMenuItem(subItem.name)}
                     >
-                      <span>{subItem.name}</span>
+                      <span className="font-medium">{subItem.name}</span>
                       {subItem.count !== undefined && (
-                        <span className="bg-gray-700 px-2 py-0.5 rounded-full text-xs">
+                        <span className={cn(
+                          "px-2 py-1 rounded-full text-xs",
+                          activeMenuItem === subItem.name
+                            ? "bg-[#ff6600]"
+                            : "bg-gray-700"
+                        )}>
                           {subItem.count}
                         </span>
                       )}
