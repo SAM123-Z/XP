@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Home } from "./screens/Home/Home";
 import { Categories } from "./screens/Categories/Categories";
 import { Restaurants } from "./screens/Restaurants/Restaurants";
@@ -14,27 +14,36 @@ import { FeedbackPage } from "./screens/Feedback/FeedbackPage";
 import { RestaurantSignup } from "./screens/RestaurantSignup";
 import { RestaurantDashboard } from "./screens/RestaurantDashboard/RestaurantDashboard";
 
+const AppContent = () => {
+  const location = useLocation();
+  const isDashboard = location.pathname === '/restaurant-dashboard';
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {!isDashboard && <HeaderSection />}
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/restaurants" element={<Restaurants />} />
+          <Route path="/checkout" element={<CheckoutConfirmation />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/restaurant-signup" element={<RestaurantSignup />} />
+          <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
+        </Routes>
+      </main>
+      <FooterSection />
+    </div>
+  );
+};
+
 const App = () => {
   return (
     <AuthProvider>
       <CartProvider>
         <Router>
-          <div className="flex flex-col min-h-screen">
-            <HeaderSection />
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/restaurants" element={<Restaurants />} />
-                <Route path="/checkout" element={<CheckoutConfirmation />} />
-                <Route path="/order-success" element={<OrderSuccess />} />
-                <Route path="/feedback" element={<FeedbackPage />} />
-                <Route path="/restaurant-signup" element={<RestaurantSignup />} />
-                <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
-              </Routes>
-            </main>
-            <FooterSection />
-          </div>
+          <AppContent />
         </Router>
       </CartProvider>
     </AuthProvider>
