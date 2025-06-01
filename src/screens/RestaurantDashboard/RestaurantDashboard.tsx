@@ -99,6 +99,7 @@ export const RestaurantDashboard = () => {
   const [selectedProduct, setSelectedProduct] = useState<TopSellingFood | TopRatedFood | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const sidebarItems: SidebarItem[] = [
     {
@@ -210,12 +211,28 @@ export const RestaurantDashboard = () => {
       type: 'bar' as const,
       toolbar: {
         show: false
+      },
+      height: '100%',
+      width: '100%',
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350
+        }
       }
     },
     plotOptions: {
       bar: {
         horizontal: false,
         columnWidth: '55%',
+        borderRadius: 4,
       },
     },
     dataLabels: {
@@ -228,10 +245,26 @@ export const RestaurantDashboard = () => {
     },
     xaxis: {
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Poppins, sans-serif',
+        }
+      }
     },
     yaxis: {
       title: {
-        text: '$ (Currency Symbol)'
+        text: '$ (Currency Symbol)',
+        style: {
+          fontSize: '14px',
+          fontFamily: 'Poppins, sans-serif',
+        }
+      },
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Poppins, sans-serif',
+        }
       }
     },
     fill: {
@@ -240,11 +273,23 @@ export const RestaurantDashboard = () => {
     tooltip: {
       y: {
         formatter: function (val: number) {
-          return "$ " + val
+          return "$ " + val.toFixed(2)
+        }
+      },
+      theme: 'dark'
+    },
+    colors: ['#4318FF', '#6AD2FF'],
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: '100%'
+        },
+        legend: {
+          position: 'bottom'
         }
       }
-    },
-    colors: ['#4318FF', '#6AD2FF']
+    }]
   };
 
   const chartSeries = [
@@ -259,10 +304,10 @@ export const RestaurantDashboard = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar - Desktop */}
       <aside className={cn(
-        "bg-[#2D2D2D] text-white transition-all duration-300 h-screen",
+        "hidden md:block bg-[#2D2D2D] text-white transition-all duration-300 h-screen sticky top-0",
         isSidebarCollapsed ? "w-20" : "w-64"
       )}>
         <div className="p-4 flex items-center justify-between">
@@ -282,7 +327,7 @@ export const RestaurantDashboard = () => {
 
         <nav className="mt-4">
           {sidebarItems.map((item, index) => (
-            <div key={index}>
+            <div key={index} className="transition-all duration-200">
               <div className={cn(
                 "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 cursor-pointer",
                 !isSidebarCollapsed && "space-x-2"
@@ -290,7 +335,7 @@ export const RestaurantDashboard = () => {
                 {item.icon}
                 {!isSidebarCollapsed && (
                   <>
-                    <span className="flex-1">{item.name}</span>
+                    <span className="flex-1 text-sm">{item.name}</span>
                     {item.count !== undefined && (
                       <span className="bg-blue-500 px-2 py-0.5 rounded-full text-xs">
                         {item.count}
@@ -300,6 +345,63 @@ export const RestaurantDashboard = () => {
                 )}
               </div>
               {!isSidebarCollapsed && item.subItems && (
+                <div className="pl-10 pr-4">
+                  {item.subItems.map((subItem, subIndex) => (
+                    <div
+                      key={subIndex}
+                      className="flex items-center justify-between py-2 text-sm text-gray-400 hover:text-white cursor-pointer transition-colors duration-200"
+                    >
+                      <span>{subItem.name}</span>
+                      {subItem.count !== undefined && (
+                        <span className="bg-gray-700 px-2 py-0.5 rounded-full text-xs">
+                          {subItem.count}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Mobile Menu Button */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-[#2D2D2D] text-white p-2 rounded-lg"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        <Menu className="h-6 w-6" />
+      </button>
+
+      {/* Mobile Sidebar */}
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-40 bg-[#2D2D2D] text-white w-64 transform transition-transform duration-300 ease-in-out md:hidden",
+        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <img src="/hungry-puppets-logo.png" alt="Logo" className="w-8 h-8" />
+            <span className="font-bold">Hungry Puppets</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-white hover:bg-gray-700"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
+        <nav className="mt-4">
+          {sidebarItems.map((item, index) => (
+            <div key={index}>
+              <div className="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 cursor-pointer">
+                {item.icon}
+                <span className="ml-2 flex-1">{item.name}</span>
+              </div>
+              {item.subItems && (
                 <div className="pl-10 pr-4">
                   {item.subItems.map((subItem, subIndex) => (
                     <div
@@ -322,10 +424,10 @@ export const RestaurantDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 p-4 md:p-6 md:ml-0 transition-all duration-300">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Order Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard
               label="Confirmed"
               value={orderStats.confirmed}
@@ -339,13 +441,13 @@ export const RestaurantDashboard = () => {
               icon={<ChevronDown className="h-4 w-4 text-red-600" />}
             />
             <StatCard
-              label="Ready for delivery"
+              label="Ready"
               value={orderStats.readyForDelivery}
               bgColor="bg-orange-100"
               icon={<ChevronUp className="h-4 w-4 text-green-600" />}
             />
             <StatCard
-              label="Food on the way"
+              label="On Way"
               value={orderStats.onTheWay}
               bgColor="bg-red-100"
               icon={<ChevronUp className="h-4 w-4 text-green-600" />}
@@ -376,10 +478,10 @@ export const RestaurantDashboard = () => {
           </div>
 
           {/* Yearly Statistics */}
-          <div className="bg-white rounded-lg p-6">
+          <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Yearly Statistics</h2>
-            <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between text-sm text-gray-600 mb-4">
+              <div className="flex items-center gap-2 mb-2 md:mb-0">
                 <span className="w-3 h-3 bg-[#4318FF] rounded-full"></span>
                 <span>Commission given: $182.00</span>
               </div>
@@ -388,7 +490,7 @@ export const RestaurantDashboard = () => {
                 <span>Total earning: $1,634.00</span>
               </div>
             </div>
-            <div className="h-64">
+            <div className="h-[300px] md:h-[400px]">
               <Chart
                 options={chartOptions}
                 series={chartSeries}
@@ -400,22 +502,23 @@ export const RestaurantDashboard = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Selling Foods */}
-            <div className="bg-white rounded-lg p-6">
+            <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
               <h2 className="text-lg font-semibold mb-4">Top Selling Foods</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {topSellingFoods.map((food) => (
                   <div
                     key={food.id}
-                    className="relative rounded-lg overflow-hidden cursor-pointer"
+                    className="relative rounded-lg overflow-hidden cursor-pointer transform transition-all duration-200 hover:scale-105"
                     onClick={() => handleProductClick(food)}
                   >
                     <img
                       src={food.image}
                       alt={food.name}
                       className="w-full h-32 object-cover"
+                      loading="lazy"
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
-                      <p className="text-sm font-medium">{food.name}</p>
+                      <p className="text-sm font-medium truncate">{food.name}</p>
                       <p className="text-xs">Sold: {food.soldCount}</p>
                     </div>
                   </div>
@@ -424,21 +527,22 @@ export const RestaurantDashboard = () => {
             </div>
 
             {/* Top Rated Foods */}
-            <div className="bg-white rounded-lg p-6">
+            <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
               <h2 className="text-lg font-semibold mb-4">Top Rated Foods</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {topRatedFoods.map((food) => (
                   <div
                     key={food.id}
-                    className="bg-white rounded-lg p-4 shadow cursor-pointer"
+                    className="bg-white rounded-lg p-4 shadow-sm cursor-pointer transform transition-all duration-200 hover:scale-105"
                     onClick={() => handleProductClick(food)}
                   >
                     <img
                       src={food.image}
                       alt={food.name}
                       className="w-full h-24 object-cover rounded-lg mb-2"
+                      loading="lazy"
                     />
-                    <h3 className="font-medium text-sm mb-1">{food.name}</h3>
+                    <h3 className="font-medium text-sm mb-1 truncate">{food.name}</h3>
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
                       <span className="text-sm">{food.rating}</span>
@@ -476,12 +580,12 @@ const StatCard = ({
   showIcon?: string;
   icon?: React.ReactNode;
 }) => (
-  <div className={`${bgColor || 'bg-white'} p-4 rounded-lg shadow-sm`}>
+  <div className={`${bgColor || 'bg-white'} p-4 rounded-lg shadow-sm transform transition-all duration-200 hover:scale-105`}>
     <div className="flex items-center justify-between">
-      <span className="text-gray-600 text-sm">{label}</span>
+      <span className="text-gray-600 text-sm truncate">{label}</span>
       {showIcon && <span className="text-xl">{showIcon}</span>}
       {icon && <div className="bg-white rounded-full p-1 shadow-sm">{icon}</div>}
     </div>
-    <p className="text-2xl font-bold mt-2">{value}</p>
+    <p className="text-xl md:text-2xl font-bold mt-2">{value}</p>
   </div>
 );
