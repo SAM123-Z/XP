@@ -55,7 +55,7 @@ const ProductDialog = ({ isOpen, onClose, product }: ProductDialogProps) => {
         <div className="relative rounded-lg overflow-hidden">
           <button
             onClick={onClose}
-            className="absolute right-2 top-2 p-1 bg-white rounded-full z-10"
+            className="absolute right-2 top-2 p-1 bg-white rounded-full z-10 hover:bg-gray-100 transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -63,29 +63,26 @@ const ProductDialog = ({ isOpen, onClose, product }: ProductDialogProps) => {
             src={product.image}
             alt={product.name}
             className="w-full h-48 object-cover"
+            loading="lazy"
           />
           <div className="p-6">
             <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
             <p className="text-gray-600 mb-4">
-              {product.inStock ? "This product is in stock." : "This product is out of stock."}
+              {product.inStock ? "Ce produit est en stock." : "Ce produit est en rupture de stock."}
             </p>
             <div className="flex gap-4">
               <Button
                 variant="outline"
-                className="flex-1 text-blue-600 hover:text-blue-700"
-                onClick={() => {
-                  onClose();
-                }}
+                className="flex-1 text-[#ff6600] hover:text-[#ff6600]/80 border-[#ff6600]"
+                onClick={onClose}
               >
-                Remind me later
+                Me le rappeler plus tard
               </Button>
               <Button
-                className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
-                onClick={() => {
-                  onClose();
-                }}
+                className="flex-1 bg-[#ff6600] text-white hover:bg-[#ff6600]/90"
+                onClick={onClose}
               >
-                Click To View
+                Voir les détails
               </Button>
             </div>
           </div>
@@ -107,34 +104,34 @@ export const RestaurantDashboard = () => {
       icon: <Home className="h-5 w-5" />,
     },
     {
-      name: 'ORDER MANAGEMENT',
+      name: 'GESTION DES COMMANDES',
       icon: <ShoppingBag className="h-5 w-5" />,
       subItems: [
-        { name: 'All', count: 63 },
-        { name: 'Cooking', count: 0 },
-        { name: 'Pending', count: 35 },
-        { name: 'Confirmed', count: 1 },
-        { name: 'Ready For Delivery', count: 1 },
-        { name: 'Food On The Way', count: 1 },
-        { name: 'Delivered', count: 23 },
-        { name: 'Payment Failed', count: 0 },
-        { name: 'Canceled', count: 0 },
+        { name: 'Toutes', count: 63 },
+        { name: 'En cours', count: 0 },
+        { name: 'En attente', count: 35 },
+        { name: 'Confirmées', count: 1 },
+        { name: 'Prêtes', count: 1 },
+        { name: 'En livraison', count: 1 },
+        { name: 'Livrées', count: 23 },
+        { name: 'Échec paiement', count: 0 },
+        { name: 'Annulées', count: 0 },
       ]
     },
     {
-      name: 'FOOD MANAGEMENT',
+      name: 'GESTION DES PLATS',
       icon: <Package className="h-5 w-5" />,
       subItems: [
-        { name: 'Categories' },
-        { name: 'Add New' },
-        { name: 'List', count: 20 },
+        { name: 'Catégories' },
+        { name: 'Ajouter nouveau' },
+        { name: 'Liste', count: 20 },
       ]
     },
     {
-      name: 'PROFIL DU RESTAU',
+      name: 'PROFIL DU RESTAURANT',
       icon: <Store className="h-5 w-5" />,
       subItems: [
-        { name: 'My Shop' },
+        { name: 'Mon restaurant' },
       ]
     },
   ];
@@ -160,14 +157,14 @@ export const RestaurantDashboard = () => {
     },
     {
       id: 2,
-      name: "Meat Pizza",
+      name: "Pizza Viande",
       image: "https://images.pexels.com/photos/1146760/pexels-photo-1146760.jpeg",
       soldCount: 5,
       inStock: false
     },
     {
       id: 3,
-      name: "Chicken Shawarma",
+      name: "Shawarma Poulet",
       image: "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg",
       soldCount: 2,
       inStock: true
@@ -177,7 +174,7 @@ export const RestaurantDashboard = () => {
   const topRatedFoods: TopRatedFood[] = [
     {
       id: 4,
-      name: "Meat Pizza",
+      name: "Pizza Viande",
       image: "https://images.pexels.com/photos/1146760/pexels-photo-1146760.jpeg",
       rating: 4.5,
       reviews: 3,
@@ -214,6 +211,7 @@ export const RestaurantDashboard = () => {
       },
       height: '100%',
       width: '100%',
+      fontFamily: 'Poppins, sans-serif',
       animations: {
         enabled: true,
         easing: 'easeinout',
@@ -233,6 +231,9 @@ export const RestaurantDashboard = () => {
         horizontal: false,
         columnWidth: '55%',
         borderRadius: 4,
+        distributed: false,
+        rangeBarOverlap: true,
+        rangeBarGroupRows: false,
       },
     },
     dataLabels: {
@@ -244,39 +245,68 @@ export const RestaurantDashboard = () => {
       colors: ['transparent']
     },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
       labels: {
         style: {
           fontSize: '12px',
           fontFamily: 'Poppins, sans-serif',
         }
+      },
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
       }
     },
     yaxis: {
       title: {
-        text: '$ (Currency Symbol)',
+        text: 'Montant (€)',
         style: {
           fontSize: '14px',
           fontFamily: 'Poppins, sans-serif',
+          fontWeight: 500
         }
       },
       labels: {
         style: {
           fontSize: '12px',
           fontFamily: 'Poppins, sans-serif',
-        }
+        },
+        formatter: (value: number) => `${value.toFixed(0)}€`
       }
     },
     fill: {
-      opacity: 1
+      opacity: 1,
+      type: 'gradient',
+      gradient: {
+        shade: 'light',
+        type: 'vertical',
+        shadeIntensity: 0.2,
+        opacityFrom: 0.9,
+        opacityTo: 0.6,
+      }
     },
     tooltip: {
       y: {
         formatter: function (val: number) {
-          return "$ " + val.toFixed(2)
+          return val.toFixed(2) + "€"
         }
       },
-      theme: 'dark'
+      theme: 'dark',
+      style: {
+        fontSize: '12px',
+        fontFamily: 'Poppins, sans-serif'
+      }
+    },
+    grid: {
+      borderColor: '#f1f1f1',
+      strokeDashArray: 4,
+      yaxis: {
+        lines: {
+          show: true
+        }
+      }
     },
     colors: ['#4318FF', '#6AD2FF'],
     responsive: [{
@@ -286,7 +316,8 @@ export const RestaurantDashboard = () => {
           width: '100%'
         },
         legend: {
-          position: 'bottom'
+          position: 'bottom',
+          offsetY: 7
         }
       }
     }]
@@ -294,12 +325,12 @@ export const RestaurantDashboard = () => {
 
   const chartSeries = [
     {
-      name: 'Commission given',
-      data: [182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      name: 'Commission',
+      data: [182, 145, 198, 167, 145, 198, 167, 145, 198, 167, 145, 198]
     },
     {
-      name: 'Total earning',
-      data: [1634, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      name: 'Revenu total',
+      data: [1634, 1458, 1847, 1458, 1634, 1458, 1847, 1458, 1634, 1458, 1847, 1458]
     }
   ];
 
@@ -337,7 +368,7 @@ export const RestaurantDashboard = () => {
                   <>
                     <span className="flex-1 text-sm">{item.name}</span>
                     {item.count !== undefined && (
-                      <span className="bg-blue-500 px-2 py-0.5 rounded-full text-xs">
+                      <span className="bg-[#ff6600] px-2 py-0.5 rounded-full text-xs">
                         {item.count}
                       </span>
                     )}
@@ -368,7 +399,7 @@ export const RestaurantDashboard = () => {
 
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 bg-[#2D2D2D] text-white p-2 rounded-lg"
+        className="md:hidden fixed top-4 left-4 z-50 bg-[#2D2D2D] text-white p-2 rounded-lg shadow-lg"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         <Menu className="h-6 w-6" />
@@ -429,25 +460,25 @@ export const RestaurantDashboard = () => {
           {/* Order Statistics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard
-              label="Confirmed"
+              label="Confirmées"
               value={orderStats.confirmed}
               bgColor="bg-green-100"
               icon={<ChevronUp className="h-4 w-4 text-green-600" />}
             />
             <StatCard
-              label="Cooking"
+              label="En cours"
               value={orderStats.cooking}
               bgColor="bg-pink-100"
               icon={<ChevronDown className="h-4 w-4 text-red-600" />}
             />
             <StatCard
-              label="Ready"
+              label="Prêtes"
               value={orderStats.readyForDelivery}
               bgColor="bg-orange-100"
               icon={<ChevronUp className="h-4 w-4 text-green-600" />}
             />
             <StatCard
-              label="On Way"
+              label="En route"
               value={orderStats.onTheWay}
               bgColor="bg-red-100"
               icon={<ChevronUp className="h-4 w-4 text-green-600" />}
@@ -456,22 +487,22 @@ export const RestaurantDashboard = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard
-              label="Delivered"
+              label="Livrées"
               value={orderStats.delivered}
               showIcon="🚚"
             />
             <StatCard
-              label="Refunded"
+              label="Remboursées"
               value={orderStats.refunded}
               showIcon="↩️"
             />
             <StatCard
-              label="Scheduled"
+              label="Planifiées"
               value={orderStats.scheduled}
               showIcon="📅"
             />
             <StatCard
-              label="All"
+              label="Total"
               value={orderStats.total}
               showIcon="📊"
             />
@@ -479,15 +510,15 @@ export const RestaurantDashboard = () => {
 
           {/* Yearly Statistics */}
           <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Yearly Statistics</h2>
+            <h2 className="text-lg font-semibold mb-4">Statistiques annuelles</h2>
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between text-sm text-gray-600 mb-4">
               <div className="flex items-center gap-2 mb-2 md:mb-0">
                 <span className="w-3 h-3 bg-[#4318FF] rounded-full"></span>
-                <span>Commission given: $182.00</span>
+                <span>Commission : 182.00€</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 bg-[#6AD2FF] rounded-full"></span>
-                <span>Total earning: $1,634.00</span>
+                <span>Revenu total : 1,634.00€</span>
               </div>
             </div>
             <div className="h-[300px] md:h-[400px]">
@@ -503,12 +534,12 @@ export const RestaurantDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top Selling Foods */}
             <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Top Selling Foods</h2>
+              <h2 className="text-lg font-semibold mb-4">Plats les plus vendus</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {topSellingFoods.map((food) => (
                   <div
                     key={food.id}
-                    className="relative rounded-lg overflow-hidden cursor-pointer transform transition-all duration-200 hover:scale-105"
+                    className="relative rounded-lg overflow-hidden cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-lg"
                     onClick={() => handleProductClick(food)}
                   >
                     <img
@@ -517,9 +548,9 @@ export const RestaurantDashboard = () => {
                       className="w-full h-32 object-cover"
                       loading="lazy"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
+                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 backdrop-blur-sm text-white p-2">
                       <p className="text-sm font-medium truncate">{food.name}</p>
-                      <p className="text-xs">Sold: {food.soldCount}</p>
+                      <p className="text-xs">Vendus : {food.soldCount}</p>
                     </div>
                   </div>
                 ))}
@@ -528,12 +559,12 @@ export const RestaurantDashboard = () => {
 
             {/* Top Rated Foods */}
             <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Top Rated Foods</h2>
+              <h2 className="text-lg font-semibold mb-4">Plats les mieux notés</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {topRatedFoods.map((food) => (
                   <div
                     key={food.id}
-                    className="bg-white rounded-lg p-4 shadow-sm cursor-pointer transform transition-all duration-200 hover:scale-105"
+                    className="bg-white rounded-lg p-4 shadow-sm cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-lg"
                     onClick={() => handleProductClick(food)}
                   >
                     <img
@@ -547,7 +578,7 @@ export const RestaurantDashboard = () => {
                       <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
                       <span className="text-sm">{food.rating}</span>
                       <span className="text-xs text-gray-500">
-                        ({food.reviews} Reviews)
+                        ({food.reviews} avis)
                       </span>
                     </div>
                   </div>
