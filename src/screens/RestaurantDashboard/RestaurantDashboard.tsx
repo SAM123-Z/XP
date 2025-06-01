@@ -427,9 +427,16 @@ export const RestaurantDashboard = () => {
       )}>
         <div className="p-4 flex items-center justify-between border-b border-gray-700">
           <div className="flex items-center space-x-2">
-            <img src="/hungry-puppets-logo.png" alt="Logo" className="w-8 h-8" />
+            <img 
+              src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg" 
+              alt="Hungry Puppets" 
+              className="w-10 h-10 rounded-full object-cover"
+            />
             {!isSidebarCollapsed && (
-              <span className="font-bold text-lg">Hungry Puppets</span>
+              <div className="flex flex-col">
+                <span className="font-bold text-lg">Hungry</span>
+                <span className="font-bold text-[#ff6600] -mt-1">Puppets</span>
+              </div>
             )}
           </div>
           <Button
@@ -477,8 +484,15 @@ export const RestaurantDashboard = () => {
         <div className="flex flex-col h-full">
           <div className="p-4 flex items-center justify-between border-b border-gray-700">
             <div className="flex items-center space-x-2">
-              <img src="/hungry-puppets-logo.png" alt="Logo" className="w-8 h-8" />
-              <span className="font-bold text-lg">Hungry Puppets</span>
+              <img 
+                src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg" 
+                alt="Hungry Puppets" 
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-lg">Hungry</span>
+                <span className="font-bold text-[#ff6600] -mt-1">Puppets</span>
+              </div>
             </div>
             <Button
               variant="ghost"
